@@ -60,7 +60,7 @@ angular.module('starter.controllers', [])
                 company:'',
                 country:''
             };
-            localStorage.setItem('profile', profile);
+            localStorage.setItem('profile', JSON.stringify(profile));
 
             // get update reg to server
             if(pushReg !==null){
@@ -74,6 +74,7 @@ angular.module('starter.controllers', [])
                 console.log('Registraition On Server Success!');
                   //post success
                   if(pushReg !== null){
+                    pushReg.userId = loginData.username;
                     pushReg.isRegOnServer = true;
                     localStorage.setItem('pushReg', JSON.stringify(pushReg));
                   }
@@ -84,8 +85,6 @@ angular.module('starter.controllers', [])
             
             // to home
             $state.go('tab.dash');
-
-            return 
         }else{
           console.log('password wrong!');
           $scope.showError = true;

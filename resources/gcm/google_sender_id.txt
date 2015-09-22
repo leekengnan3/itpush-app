@@ -1,0 +1,39 @@
+// Server API Key
+// AIzaSyC9IixuO2X5v-UZ3sNyykYm7iOgAH-iWQw
+// Sender ID
+// 65768580939
+// M210 regid
+// APA91bHCYmfPn8XKqw_CSMHrfxLGJCdW4Fpk9wmr-jreUvEgitThoXNHAOU-BnkS2a8mio3M1PXV00XsfuNGAluHYVg2naArS_MjsRrOqvtYZPU3LWXprMxs_izt9m-12Mcwm8VRej_fj_TLoVdShjAo4CsKKl9V7g
+// APA91bHCYmfPn8XKqw_CSMHrfxLGJCdW4Fpk9wmr-jreUvEgitThoXNHAOU-BnkS2a8mio3M1PXV00XsfuNGAluHYVg2naArS_MjsRrOqvtYZPU3LWXprMxs_izt9m-12Mcwm8VRej_fj_TLoVdShjAo4CsKKl9V7g 
+
+curl \
+-H "Content-Type: application/json" \
+-H "Authorization:key=AIzaSyC9IixuO2X5v-UZ3sNyykYm7iOgAH-iWQw" \
+-X POST -d '{ "data": {"message": "中文字", "title":"系統通知","icon":"myicon"},"to" : "APA91bHCYmfPn8XKqw_CSMHrfxLGJCdW4Fpk9wmr-jreUvEgitThoXNHAOU-BnkS2a8mio3M1PXV00XsfuNGAluHYVg2naArS_MjsRrOqvtYZPU3LWXprMxs_izt9m-12Mcwm8VRej_fj_TLoVdShjAo4CsKKl9V7g"}' \
+https://gcm-http.googleapis.com/gcm/send
+
+https://gcm-http.googleapis.com/gcm/send
+Content-Type:application/json
+Authorization:key=AIzaSyZ-1u...0GBYzPu7Udno5aA
+
+{ "data": 
+ {"message": "中文字", "title":"系統通知"}
+,"to" : "APA91bHun4MxP5egoKMwt2KZFBaFUH-1RYqx..."}
+
+
+
+ios
+{"regId":"0834fc5efcc9030bbdce979bd059c706d2cd3e1d78de3206f3f11f867569626c",
+"devicePlatform":"iOS",
+"deviceUUid":"87AA155B-3DE8-40C8-86C7-9332C8DB651F",
+"isRegOnServer":false}
+
+ssl handshake failure
+http://stackoverflow.com/questions/12585858/cannot-send-push-notifications-using-javapns-javaapns-ssl-handshake-failure
+
+Send to Push-Server
+===================
+curl \
+-H "Content-Type: application/json" \
+-X POST -d '{"userId": "t2427","appId":"com.testritegroup.itpush", "uuid":"1234","devicePlatform":"iOS","regId":"regid12345"}' \
+http://localhost:8082/pushRegister
