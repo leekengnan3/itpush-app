@@ -1,0 +1,24 @@
+
+<ion-view view-title="Login">
+  <ion-content class="padding welcome center">
+  <div class="row">
+      <div class="col">
+		  <img class="responsive-img" src="img/logo-testrite-border.png">
+		  <div class="list">
+			  <label class="item item-input">
+			    <input type="text" name="username" ng-model="login.username" placeholder="AD帳號">
+			  </label>
+			  <label class="item item-input">
+			    <input type="password" name="password" ng-model="login.password" placeholder="密碼">
+			  </label>
+			  
+		   </div>
+
+		   <button class="item button button-bar button-positive" ng-click="login()">
+			      登入
+			   </button>
+			<h3 ng-show="showError">帳號或密碼輸入錯誤!</h3>
+		</div>
+	</div>
+  </ion-content>
+</ion-view>
