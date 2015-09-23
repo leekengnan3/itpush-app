@@ -30,6 +30,10 @@ angular.module('starter.controllers', [])
 
   $scope.login = function(){
     var loginData = $scope.login;
+
+    //to lower case for username
+    loginData.username = loginData.username.toLowerCase();
+
     var requestData = {
       method: 'POST',
       headers: {
