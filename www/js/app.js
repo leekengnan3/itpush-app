@@ -34,7 +34,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
     //push obj
       var push = PushNotification.init({ 'android': {'senderID': '65768580939'},
-           'ios': {}, 'windows': {} } );
+           'ios': {"alert": "true", "badge": "true", "sound": "true"}, 'windows': {} } );
 
       push.on('registration', function(data) {
           if (data.registrationId.length > 0 ) {
