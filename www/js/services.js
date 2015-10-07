@@ -1,7 +1,44 @@
+'use strict';
+
 angular.module('starter.services', [])
 .factory('Globals', function() {
   return {
     appId: 'com.testritegroup.app.testriteItPush',
+    apiServer: 'http://service.testritegroup.com/api'
+  };
+})
+.factory('ServerApi', function() {
+  return {
+    pushRegistration: function($http, username, apiServer, appId){
+      var pushReg = JSON.parse(localStorage.getItem('pushReg'));
+      // get update reg to server
+      if(pushReg !==null){
+        var postData={'userId': username,
+        'appId': appId,
+        'uuid':pushReg.deviceUuid,
+        'devicePlatform':pushReg.devicePlatform,
+        'regId':pushReg.regId,
+        'deviceModel':pushReg.deviceModel,
+        'osVersion':pushReg.osVersion,
+        'browserCodeName':pushReg.browserCodeName,
+        'browserName':pushReg.browserName,
+        'browserVersion':pushReg.browserVersion,
+        'browserLanguage':pushReg.browserLanguage,
+        'browserUserAgent':pushReg.browserUserAgent};
+
+        $http.post(apiServer+'/pushRegister',postData).then(function(){
+          console.log('Registraition On Server Success!');
+            //post success
+            if(pushReg !== null){
+              pushReg.userId = username;
+              pushReg.isRegOnServer = true;
+              localStorage.setItem('pushReg', JSON.stringify(pushReg));
+            }
+          }, function(e){
+            console.log('Registraition On Server Failed! ' + JSON.stringify(e));
+        });
+      }
+    },
     apiServer: 'http://service.testritegroup.com/api'
   };
 })

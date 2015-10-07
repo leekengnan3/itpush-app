@@ -5,6 +5,13 @@ angular.module('starter.controllers', [])
 
 .controller('DashCtrl', function($scope) {})
 
+.controller('WelcomeCtrl', function($scope, $state) {
+  var profileStr = localStorage.getItem('profile');
+  if(profileStr !== null){
+    $state.go('tab.dash');
+  }
+})
+
 .controller('ChatsCtrl', function($scope, Chats) {
   // With the new view caching in Ionic, Controllers are only called
   // when they are recreated or on app start, instead of every page change.
@@ -23,11 +30,8 @@ angular.module('starter.controllers', [])
 .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
   $scope.chat = Chats.get($stateParams.chatId);
 })
-.controller('LoginCtrl', function($scope, $http, Globals, $state) {
+.controller('LoginCtrl', function($scope, $http, $state, ServerApi, Globals) {
   console.log('in login ctrl');
-
-  
-
   $scope.login = function(){
     var loginData = $scope.login;
 
@@ -45,8 +49,6 @@ angular.module('starter.controllers', [])
          password: loginData.password
         }
     };
-
-    var pushReg = JSON.parse(localStorage.getItem('pushReg'));
     
     $http(requestData).then(
       function(response){
@@ -64,28 +66,11 @@ angular.module('starter.controllers', [])
                 company:'',
                 country:''
             };
+
             localStorage.setItem('profile', JSON.stringify(profile));
 
             // get update reg to server
-            if(pushReg !==null){
-              var postData={'userId': loginData.username,
-              'appId': Globals.appId,
-              'uuid':pushReg.deviceUuid,
-              'devicePlatform':pushReg.devicePlatform,
-              'regId':pushReg.regId};
-
-              $http.post(Globals.apiServer+'/pushRegister',postData).then(function(){
-                console.log('Registraition On Server Success!');
-                  //post success
-                  if(pushReg !== null){
-                    pushReg.userId = loginData.username;
-                    pushReg.isRegOnServer = true;
-                    localStorage.setItem('pushReg', JSON.stringify(pushReg));
-                  }
-                }, function(){
-                  console.log('Registraition On Server Failed!');
-              });
-            }
+            ServerApi.pushRegistration($http, loginData.username, Globals.apiServer, Globals.appId);
             
             // to home
             $state.go('tab.dash');

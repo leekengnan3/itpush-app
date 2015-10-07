@@ -1,4 +1,5 @@
-// Ionic Starter App
+/*global angular, cordova, device, StatusBar, PushNotification */
+'use strict';
 
 // angular.module is a global place for creating, registering and retrieving Angular modules
 // 'starter' is the name of this angular module example (also set in a <body> attribute in index.html)
@@ -7,7 +8,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-.run(function($ionicPlatform, Globals) {
+.run(function($ionicPlatform, Globals, ServerApi, $http) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -31,17 +32,32 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     document.addEventListener('deviceready', function(){
       pushReg.devicePlatform = device.platform;
       pushReg.deviceUuid = device.uuid;
+      pushReg.deviceModel = device.model;
+      pushReg.osVersion = device.version;
+      pushReg.browserCodeName = navigator.appCodeName;
+      pushReg.browserName = navigator.appName;
+      pushReg.browserVersion = navigator.appVersion;
+      pushReg.browserLanguage = navigator.language;
+      pushReg.browserUserAgent = navigator.userAgent;
 
     //push obj
       var push = PushNotification.init({ 'android': {'senderID': '65768580939'},
            'ios': {"alert": "true", "badge": "true", "sound": "true"}, 'windows': {} } );
 
       push.on('registration', function(data) {
-          if (data.registrationId.length > 0 ) {
-                console.log('registration ID = ' + data.registrationId);
-                pushReg.regId = data.registrationId;
-        }
+        pushReg.regId = data.registrationId;
         localStorage.setItem('pushReg', JSON.stringify(pushReg));
+
+        if (data.registrationId.length > 0 ) {
+                console.log('registration ID = ' + data.registrationId);
+
+                // get update reg to server
+                var profileStr = localStorage.getItem('profile');
+                if(profileStr !== null){
+                  var profile = JSON.parse(profileStr);
+                  ServerApi.pushRegistration($http, profile.username, Globals.apiServer, Globals.appId);
+                }
+        }
       });
 
       //
@@ -77,7 +93,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
   // Welcome Page
   .state('welcome', {
     url: '/welcome',
-    templateUrl: 'templates/welcome.html'
+    templateUrl: 'templates/welcome.html',
+    controller: 'WelcomeCtrl'
   })
 
   // Login Page
