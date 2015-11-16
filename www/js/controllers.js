@@ -3,7 +3,13 @@
 
 angular.module('starter.controllers', [])
 
-.controller('DashCtrl', function($scope) {})
+.controller('DashCtrl', function($scope) {
+  var profileStr = localStorage.getItem('profile');
+  var profile = JSON.parse(profileStr);
+  console.log('in dash controller');
+  $scope.fullname = profile.localFullname;
+
+})
 
 .controller('WelcomeCtrl', function($scope, $state) {
   var profileStr = localStorage.getItem('profile');
@@ -12,25 +18,29 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('ChatsCtrl', function($scope, Chats) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+.controller('MessageCtrl', function($scope, $http, ServerApi, Globals,$q) {
+  console.log('in MessageCtrl');
+  var profileStr = localStorage.getItem('profile');
+  var profile = JSON.parse(profileStr);
+  var promise = ServerApi.getMyPushMessages($http, profile.userId, Globals,$q);
 
-  $scope.chats = Chats.all();
-  $scope.remove = function(chat) {
-    Chats.remove(chat);
-  };
+  promise.then(
+    function(pushMessages){
+      $scope.pushMessages = pushMessages;
+    },
+    function(error){
+      console.log('Get push log error cause: '+error);
+    }
+  );
+  // $scope.remove = function(chat) {
+  //   Chats.remove(chat);
+  // };
 })
 
 .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
   $scope.chat = Chats.get($stateParams.chatId);
 })
-.controller('LoginCtrl', function($scope, $http, $state, ServerApi, Globals) {
+.controller('LoginCtrl', function($scope, $http, $state, ServerApi, Globals,$q) {
   console.log('in login ctrl');
   $scope.login = function(){
     var loginData = $scope.login;
@@ -38,52 +48,24 @@ angular.module('starter.controllers', [])
     //to lower case for username
     loginData.username = loginData.username.toLowerCase();
 
-    var requestData = {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'text/plain'
-      },
-      url: Globals.apiServer+'/adAuth',
-      data:{
+    var authData = {
          username: loginData.username,
          password: loginData.password
-        }
-    };
-    
-    $http(requestData).then(
-      function(response){
-        //success
-        if(response.data === 'true'){
-              console.log('Login succcess!');
-              var profile = {
-                username: loginData.username,
-                email: '',
-                firstName: '',
-                lastName: '',
-                title:'',
-                tel:'',
-                localFullname:'',
-                company:'',
-                country:''
-            };
+        };
+    var promise = ServerApi.adLogin($http, authData, Globals, ServerApi,$q);
 
-            localStorage.setItem('profile', JSON.stringify(profile));
-
-            // get update reg to server
-            ServerApi.pushRegistration($http, loginData.username, Globals.apiServer, Globals.appId);
-            
-            // to home
-            $state.go('tab.dash');
-        }else{
-          console.log('password wrong!');
-          $scope.showError = true;
-        }
-      },
+    promise.then(
+      function(profile){
+        console.log("In LoginCtrl profile :"+ JSON.stringify(profile));
+        $state.go('tab.dash');
+      }, 
       function(error){
-        //fail
-        console.log('Call url Error '+JSON.stringify(error));
+        console.log(error);
+        $scope.showError = true;
       }
     );
+
+    
   };// end of login method
 })
 

@@ -4,7 +4,7 @@ angular.module('starter.services', [])
 .factory('Globals', function() {
   return {
     appId: 'com.testritegroup.app.testriteItPush',
-    apiServer: 'http://service.testritegroup.com/api'
+    apiServer: 'http://127.0.0.1:8080'
   };
 })
 .factory('ServerApi', function() {
@@ -26,6 +26,8 @@ angular.module('starter.services', [])
         'browserLanguage':pushReg.browserLanguage,
         'browserUserAgent':pushReg.browserUserAgent};
 
+        console.log(postData);
+
         $http.post(apiServer+'/pushRegister',postData).then(function(){
           console.log('Registraition On Server Success!');
             //post success
@@ -39,7 +41,84 @@ angular.module('starter.services', [])
         });
       }
     },
-    apiServer: 'http://service.testritegroup.com/api'
+    adLogin: function($http, authData, Globals, ServerApi, q){
+        var defer = q.defer();
+         var requestData = {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          url: Globals.apiServer+'/adAuth',
+          data: authData
+        };
+        
+        $http(requestData).then(
+          function(response){
+            //success
+            console.log(response);
+            console.log(response.responseCode);
+
+            if(response.data.reponseCode === 200){
+                  var adProfile = response.data.data;
+                  console.log('Login succcess!');
+                  var profile = {
+                    username: adProfile.userId,
+                    email: adProfile.email,
+                    userId: adProfile.userId,
+                    title: adProfile.title,
+                    tel: adProfile.tel,
+                    localFullname: adProfile.displayName,
+                    company: adProfile.company,
+                    country: adProfile.co
+                };
+
+                localStorage.setItem('profile', JSON.stringify(profile));
+
+                // get update reg to server
+                ServerApi.pushRegistration($http, authData.username, Globals.apiServer, Globals.appId);
+                defer.resolve(profile);
+            }else{
+              defer.reject('password wrong!');
+            }
+          },
+          function(error){
+            defer.reject(error);
+          }
+        );
+
+        return defer.promise;
+    },
+    getMyPushMessages: function($http, userId, Globals, $q){
+      var requestData = {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'text/plain'
+          },
+          url: Globals.apiServer+'/pushLog/'+userId+'/appId/'+Globals.appId+'/'
+        };
+
+      var defer = $q.defer();
+
+
+
+      $http(requestData).then(
+          function(response){
+            //success
+            if(response.data.reponseCode === 200){
+                return defer.resolve(response.data.data);
+            }else{
+              console.log('get push log error!');
+              defer.reject('get push log error!');
+            }
+          },
+          function(error){
+            //fail
+            defer.reject(error);
+          }
+        );
+
+      return defer.promise;
+    }
   };
 })
 .factory('Chats', function() {
