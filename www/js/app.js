@@ -62,12 +62,24 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
       //
       push.on('notification', function(data) {
+        console.log('received push msgs');
         $rootScope.$broadcast('root:push-notified', data);
       });
 
       push.on('error', function(e) {
           console.log('GCM error = ' + e);
       });
+
+
+      $ionicPlatform.registerBackButtonAction(function (event) {
+        navigator.app.exitApp();
+        // if($state.current.name==='tab' || $state.current.name==='tab.dash' || $state.current.name==='tab.chat' ){
+        //   navigator.app.exitApp();
+        // }
+        // else {
+        //   navigator.app.backHistory();
+        // }
+      }, 100);
     }, false);
   });
 })

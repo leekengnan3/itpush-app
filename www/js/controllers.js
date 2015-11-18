@@ -42,7 +42,7 @@ angular.module('starter.controllers', [])
   };
 
   $rootScope.$on('root:push-notified', function(event, data) {
-          console.log('received root:push-notified');
+          console.log('received from event root:push-notified');
           // A confirm dialog
           var confirmPopup = $ionicPopup.confirm({
                title: '您有新訊息',
