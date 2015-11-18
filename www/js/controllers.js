@@ -8,7 +8,6 @@ angular.module('starter.controllers', [])
   var profile = JSON.parse(profileStr);
   console.log('in dash controller');
   $scope.fullname = profile.localFullname;
-
 })
 
 .controller('WelcomeCtrl', function($scope, $state) {
@@ -18,23 +17,46 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('MessageCtrl', function($scope, $http, ServerApi, Globals,$q) {
-  console.log('in MessageCtrl');
-  var profileStr = localStorage.getItem('profile');
-  var profile = JSON.parse(profileStr);
-  var promise = ServerApi.getMyPushMessages($http, profile.userId, Globals,$q);
+.controller('TabCtrl', function($scope, $http, ServerApi, Globals,$q,$rootScope,$state) {
+  $scope.readMessage = function(){
 
-  promise.then(
-    function(pushMessages){
-      $scope.pushMessages = pushMessages;
-    },
-    function(error){
-      console.log('Get push log error cause: '+error);
+    //todo read localstorage and getUnread message count
+    $scope.rootUnreadMsgCount ='' ;
+
+    var profileStr = localStorage.getItem('profile');
+    var profile = JSON.parse(profileStr);
+    var promise = ServerApi.getMyPushMessages($http, profile.userId, Globals,$q);
+
+    promise.then(
+      function(pushMessages){
+        $scope.pushMessages = pushMessages;
+      },
+      function(error){
+        console.log('Get push log error cause: '+error);
+      }
+    );
+    $state.go('tab.chats');
+  };
+
+  $scope.showDashboard = function(){
+      console.log('in showDashboard()');
+      $state.go('tab.dash');
+  };
+
+  $rootScope.$on('rootScope:receivePush', function (event, data) {
+    var unReadCount = parseInt($rootScope.unreadMsgCount);
+    if(isNaN(unReadCount)){
+      unReadCount = 0;
     }
-  );
-  // $scope.remove = function(chat) {
-  //   Chats.remove(chat);
-  // };
+    console.log('current unread message: '+ unReadCount);
+    $scope.unreadMsgCount = (unReadCount + 1).toString();
+    console.log('received: '+ JSON.stringify(data));
+  });
+
+})
+
+.controller('MessageCtrl', function() {
+  console.log('in MessageCtrl');
 })
 
 .controller('ChatDetailCtrl', function($scope, $stateParams, Chats) {
@@ -56,7 +78,7 @@ angular.module('starter.controllers', [])
 
     promise.then(
       function(profile){
-        console.log("In LoginCtrl profile :"+ JSON.stringify(profile));
+        console.log('In LoginCtrl profile :'+ JSON.stringify(profile));
         $state.go('tab.dash');
       }, 
       function(error){

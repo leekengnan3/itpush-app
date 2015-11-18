@@ -8,7 +8,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
-.run(function($ionicPlatform, Globals, ServerApi, $http) {
+.run(function($ionicPlatform, Globals, ServerApi, $http, $rootScope) {
   $ionicPlatform.ready(function() {
     // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
     // for form inputs)
@@ -62,13 +62,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
       //
       push.on('notification', function(data) {
-          // data.message,
-          // data.title,
-          // data.count,
-          // data.sound,
-          // data.image, 
-          // data.additionalData
-          console.log('message = ' + data.message + ' msgCount = ' + data.count);
+          console.log('brocasting notification:'+ JSON.stringify(data));
+          $rootScope.$broadcast('rootScope:receivePush', data);
       });
 
       push.on('error', function(e) {
@@ -108,7 +103,8 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
     .state('tab', {
     url: '/tab',
     abstract: true,
-    templateUrl: 'templates/tabs.html'
+    templateUrl: 'templates/tabs.html',
+    controller: 'TabCtrl'
   })
 
   // Each tab has its own nav history stack:

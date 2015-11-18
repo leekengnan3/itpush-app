@@ -4,7 +4,8 @@ angular.module('starter.services', [])
 .factory('Globals', function() {
   return {
     appId: 'com.testritegroup.app.testriteItPush',
-    apiServer: 'http://127.0.0.1:8080'
+    // apiServer: 'http://127.0.0.1:8080'
+    apiServer: 'http://service.testritegroup.com/api'
   };
 })
 .factory('ServerApi', function() {
