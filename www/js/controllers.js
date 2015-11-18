@@ -17,12 +17,8 @@ angular.module('starter.controllers', [])
   }
 })
 
-.controller('TabCtrl', function($scope, $http, ServerApi, Globals,$q,$rootScope,$state) {
+.controller('TabCtrl', function($scope, $http, ServerApi, Globals,$q,$rootScope,$state,$ionicPopup) {
   $scope.readMessage = function(){
-
-    //todo read localstorage and getUnread message count
-    $scope.rootUnreadMsgCount ='' ;
-
     var profileStr = localStorage.getItem('profile');
     var profile = JSON.parse(profileStr);
     var promise = ServerApi.getMyPushMessages($http, profile.userId, Globals,$q);
@@ -40,19 +36,26 @@ angular.module('starter.controllers', [])
 
   $scope.showDashboard = function(){
       console.log('in showDashboard()');
+      //todo read localstorage and getUnread message count
+      $scope.unreadMsgCount ='' ;
       $state.go('tab.dash');
   };
 
-  $rootScope.$on('rootScope:receivePush', function (event, data) {
-    var unReadCount = parseInt($rootScope.unreadMsgCount);
-    if(isNaN(unReadCount)){
-      unReadCount = 0;
-    }
-    console.log('current unread message: '+ unReadCount);
-    $scope.unreadMsgCount = (unReadCount + 1).toString();
-    console.log('received: '+ JSON.stringify(data));
+  $rootScope.$on('root:push-notified', function(event, data) {
+          console.log('received root:push-notified');
+          // A confirm dialog
+          var confirmPopup = $ionicPopup.confirm({
+               title: '您有新訊息',
+               template: '要前往查看嗎?'
+             });
+             confirmPopup.then(function(res) {
+               if(res) {
+                 $scope.readMessage();
+               } else {
+                 console.log('You are not sure');
+               }
+          });
   });
-
 })
 
 .controller('MessageCtrl', function() {

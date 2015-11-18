@@ -42,7 +42,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
     //push obj
       var push = PushNotification.init({ 'android': {'senderID': '65768580939'},
-           'ios': {"alert": "true", "badge": "true", "sound": "true"}, 'windows': {} } );
+           'ios': {'alert': 'true', 'badge': 'true', 'sound': 'true'}, 'windows': {} } );
 
       push.on('registration', function(data) {
         pushReg.regId = data.registrationId;
@@ -62,8 +62,7 @@ angular.module('starter', ['ionic', 'starter.controllers', 'starter.services'])
 
       //
       push.on('notification', function(data) {
-          console.log('brocasting notification:'+ JSON.stringify(data));
-          $rootScope.$broadcast('rootScope:receivePush', data);
+        $rootScope.$broadcast('root:push-notified', data);
       });
 
       push.on('error', function(e) {
