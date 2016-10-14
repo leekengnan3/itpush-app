@@ -6,3 +6,8 @@
 ## 待實現功能
 * App上推播訊息的歷史查詢
 * App上待辦事項指派及執行狀態
+
+## Install
+* git clone https://github.com/ericyuTestrite/itpush-app.git
+* cordova platform add android
+* cordova run android --device
